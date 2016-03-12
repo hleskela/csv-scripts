@@ -3,14 +3,17 @@ import glob
 import sys
 
 parser = argparse.ArgumentParser(description='Merge some .csv files.')
+parser.add_argument("-d", "--directory", help="Path to the directory containing the .csv files to be merged", required=True)
+parser.add_argument("-l", "--length", help="Number of lines in the longest document", type=int, required=True)
+args = parser.parse_args()
 
-MAXLENGTH = 14
+MAXLENGTH = args.length
+DIRECTORY = args.directory
 fileNames = []
 
-for filename in glob.glob(sys.argv[1] + '*.csv'):
+for filename in glob.glob(DIRECTORY + '*.csv'):
     fileNames.append(filename);
 
-MAXLENGTH = int(sys.argv[2]) #ugly check
 
 fileObjects = []
 try:
@@ -27,6 +30,8 @@ try:
 
         
         mergedFile.seek(0,0) # Set pointer to start of mergedFile
+        rowLength = len(mergedFile.readline())
+        mergedFile.seek(rowLength, 0)
         mergedFile.write(numberOfParameters)
 
         print(numberOfParameters, end='') # To remove newline from output
